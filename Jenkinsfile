@@ -35,6 +35,7 @@ node('maven') {
         def oc = "oc --namespace=${DEV_PROJECT}"
         sh "${oc} process -f openshift/application.yml -p APPLICATION_IMAGE_TAG=${DEPLOYMENT_VERSION} | ${oc} apply -f -"
         sh "${oc} tag ${CI_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION} ${DEV_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION}"
+        sh "${oc} rollout latest dc/${APP_NAME}"
         sh "${oc} rollout status dc/${APP_NAME} --watch"
     }
 
@@ -57,6 +58,7 @@ node('maven') {
             def oc = "oc --namespace=${TEST_PROJECT}"
             sh "${oc} process -f openshift/application.yml -p APP_VERSION=${DEPLOYMENT_VERSION} | ${oc} apply -f -"
             sh "${oc} tag ${DEV_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION} ${TEST_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION}"
+            sh "${oc} rollout latest dc/${APP_NAME}"
             sh "${oc} rollout status dc/${APP_NAME} --watch"
         }
 
@@ -80,6 +82,7 @@ node('maven') {
             def oc = "oc --namespace=${PROD_PROJECT}"
             sh "${oc} process -f openshift/application.yml -p APP_VERSION=${DEPLOYMENT_VERSION} | ${oc} apply -f -"
             sh "${oc} tag ${TEST_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION} ${PROD_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION}"
+            sh "${oc} rollout latest dc/${APP_NAME}"
             sh "${oc} rollout status dc/${APP_NAME} --watch"
         }
 
