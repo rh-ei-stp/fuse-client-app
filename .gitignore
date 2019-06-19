@@ -1,0 +1,11 @@
+target/
+.metadata
+local.properties
+.settings/
+.loadpath
+.recommenders
+*.iml
+.idea
+.DS_Store
+*.class
+.classpath

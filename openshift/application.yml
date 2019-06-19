@@ -1,0 +1,59 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: fuse-client-app
+metadata:
+  annotations:
+    description: deployment for Fuse AMQP client app
+  name: fuse-client-app
+objects:
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      labels:
+        app: fuse-client-app
+      name: fuse-client-app
+    spec:
+      replicas: 1
+      selector:
+        app: fuse-client-app
+      template:
+        metadata:
+          labels:
+            app: fuse-client-app
+        spec:
+          containers:
+            - name: fuse-client-app
+              image: ' '
+              ports:
+                - containerPort: 8778
+                  name: jolokia
+              readinessProbe:
+                httpGet:
+                  path: /health
+                  port: 8081
+                initialDelaySeconds: 10
+              livenessProbe:
+                httpGet:
+                  path: /health
+                  port: 8081
+                initialDelaySeconds: 180
+              resources:
+                limits:
+                  cpu: "1.0"
+                  memory: 256Mi
+                requests:
+                  cpu: "0.2"
+                  memory: 256Mi
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            automatic: false
+            containerNames:
+              - fuse-client-app
+            from:
+              kind: ImageStreamTag
+              name: fuse-client-app:${APPLICATION_IMAGE_TAG}
+parameters:
+  - name: APPLICATION_IMAGE_TAG
+    value: latest
