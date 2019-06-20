@@ -14,12 +14,13 @@ public class ProducerRouteBuilder extends RouteBuilder {
 	public void configure() throws Exception {
 
 		onException(Exception.class)
-			.handled(true)
-			.log("******#####Exception occured. Body is ${body}");
+				.handled(true)
+				.transform(simple("${exception.message}"))
+				.log("Exception: ${body}");
 
 		from("timer://foo?fixedRate=true&period=1000").routeId("producer")
-			.setBody(simple("Test Message at ->" + "${date:now}")).log("${body}")
-			.to("amqp:" + queueName);
+				.setBody(simple("Test Message at ->" + "${date:now}")).log("${body}")
+				.to("amqp:" + queueName);
 
 	}
 

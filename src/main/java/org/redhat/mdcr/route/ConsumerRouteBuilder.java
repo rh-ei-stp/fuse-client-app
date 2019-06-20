@@ -14,11 +14,12 @@ public class ConsumerRouteBuilder extends RouteBuilder {
 	public void configure() throws Exception {
 
 		onException(Exception.class)
-			.handled(true)
-			.log("******#####Exception occured. Body is ${body}");
+				.handled(true)
+				.transform(simple("${exception.message}"))
+				.log("Exception: ${body}");
 
 		from("amqp:" + queueName).routeId("consumer")
-			.log("${body}");
+				.log("${body}");
 
 	}
 
