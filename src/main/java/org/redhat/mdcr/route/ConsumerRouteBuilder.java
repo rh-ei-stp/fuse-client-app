@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProducerRouteBuilder extends RouteBuilder {
+public class ConsumerRouteBuilder extends RouteBuilder {
 
 	@Value("${queue.name}")
 	private String queueName;
@@ -17,9 +17,8 @@ public class ProducerRouteBuilder extends RouteBuilder {
 			.handled(true)
 			.log("******#####Exception occured. Body is ${body}");
 
-		from("timer://foo?fixedRate=true&period=1000")
-			.setBody(simple("Test Message at ->" + "${date:now}")).log("${body}")
-			.to("amqp:" + queueName);
+		from("amqp:" + queueName)
+			.log("${body}");
 
 	}
 
