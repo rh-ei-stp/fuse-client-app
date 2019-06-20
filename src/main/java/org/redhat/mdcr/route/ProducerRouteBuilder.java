@@ -17,7 +17,7 @@ public class ProducerRouteBuilder extends RouteBuilder {
 			.handled(true)
 			.log("******#####Exception occured. Body is ${body}");
 
-		from("timer://foo?fixedRate=true&period=1000")
+		from("timer://foo?fixedRate=true&period=1000").routeId("producer")
 			.setBody(simple("Test Message at ->" + "${date:now}")).log("${body}")
 			.to("amqp:" + queueName);
 

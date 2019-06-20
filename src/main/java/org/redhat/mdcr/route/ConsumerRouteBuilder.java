@@ -17,7 +17,7 @@ public class ConsumerRouteBuilder extends RouteBuilder {
 			.handled(true)
 			.log("******#####Exception occured. Body is ${body}");
 
-		from("amqp:" + queueName)
+		from("amqp:" + queueName).routeId("consumer")
 			.log("${body}");
 
 	}
