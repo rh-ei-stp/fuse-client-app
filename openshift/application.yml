@@ -45,6 +45,14 @@ objects:
                 requests:
                   cpu: "0.2"
                   memory: 256Mi
+              volumeMounts:
+                - name: application-config
+                  mountPath: /deployments/config
+          volumes:
+            - name: application-config
+              configMap:
+                name: fuse-client-app
+                defaultMode: 420
       triggers:
         - type: ImageChange
           imageChangeParams:

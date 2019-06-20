@@ -24,6 +24,10 @@ Source application artifact and run image build:
 
 ## Deploying the application image
 
+Apply a configmap for application configuration:
+
+`oc create configmap fuse-client-app --from-file=src/main/resources/application.properties --dry-run -o yaml | oc apply -f -`
+
 Apply the application template:
 
 `oc process -f openshift/application.yml -o yaml | oc apply -f -`

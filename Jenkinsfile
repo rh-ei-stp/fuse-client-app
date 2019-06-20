@@ -33,6 +33,7 @@ node('maven') {
 
     stage('Deploy to DEV') {
         def oc = "oc --namespace=${DEV_PROJECT}"
+        sh "${oc} create configmap fuse-client-app --from-file=src/main/resources/application.properties --dry-run -o yaml | ${oc} apply -f -"
         sh "${oc} process -f openshift/application.yml -p APPLICATION_IMAGE_TAG=${DEPLOYMENT_VERSION} | ${oc} apply -f -"
         sh "${oc} tag ${CI_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION} ${DEV_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION}"
         sh "${oc} rollout latest dc/${APP_NAME}"
