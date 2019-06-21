@@ -7,8 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConsumerRouteBuilder extends RouteBuilder {
 
-	@Value("${queue.name}")
+	@Value("${consumer.queue.name}")
 	private String queueName;
+	
+	@Value("${consumer.route.switch}")
+	private boolean runRoute;
 	
 	@Override
 	public void configure() throws Exception {
@@ -18,8 +21,10 @@ public class ConsumerRouteBuilder extends RouteBuilder {
 				.transform(simple("${exception.message}"))
 				.log("Exception: ${body}");
 
-		from("amqp:" + queueName).routeId("consumer")
-				.log("${body}");
+		if (runRoute) {
+			from("consumeramqp:" + queueName).routeId("consumer")
+					.log("${body}");
+		} else System.out.println("Consumer route is not started");
 
 	}
 
