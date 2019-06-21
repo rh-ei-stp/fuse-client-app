@@ -21,10 +21,9 @@ public class ConsumerRouteBuilder extends RouteBuilder {
 				.transform(simple("${exception.message}"))
 				.log("Exception: ${body}");
 
-		if (runRoute) {
-			from("consumeramqp:" + queueName).routeId("consumer")
-					.log("${body}");
-		} else System.out.println("Consumer route is not started");
+
+		from("consumeramqp:" + queueName).routeId("consumer").autoStartup(runRoute)
+				.log("${body}");
 
 	}
 

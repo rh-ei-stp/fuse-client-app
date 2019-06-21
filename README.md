@@ -26,7 +26,7 @@ Source application artifact and run image build:
 
 Apply a configmap for application configuration:
 
-`oc create configmap fuse-client-app --from-file=src/main/resources/application.properties --dry-run -o yaml | oc apply -f -`
+`oc create configmap fuse-client-app --from-file=src/main/resources/configmap.properties --dry-run -o yaml | oc apply -f -`
 
 Apply the application template:
 
