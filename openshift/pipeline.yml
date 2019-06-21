@@ -20,7 +20,7 @@ items:
       source:
         git:
           uri: https://github.com/rh-ei-stp/fuse-client-app.git
-          ref: client-consumer
+          ref: master
       strategy:
         jenkinsPipelineStrategy:
           jenkinsfilePath: Jenkinsfile
