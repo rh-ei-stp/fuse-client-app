@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProducerRouteBuilder extends RouteBuilder {
+public class ConsumerRouteBuilder extends RouteBuilder {
 
-	@Value("${producer.queue.name}")
+	@Value("${consumer.queue.name}")
 	private String queueName;
 	
-	@Value("${producer.route.switch}")
+	@Value("${consumer.route.switch}")
 	private boolean runRoute;
 	
 	@Override
@@ -21,9 +21,9 @@ public class ProducerRouteBuilder extends RouteBuilder {
 				.transform(simple("${exception.message}"))
 				.log("Exception: ${body}");
 
-		from("timer://foo?fixedRate=true&period=1000").routeId("producer").autoStartup(runRoute)
-			.setBody(simple("Test Message at ->" + "${date:now}")).log("${body}")
-			.to("produceramqp:" + queueName);
+
+		from("consumeramqp:" + queueName).routeId("consumer").autoStartup(runRoute)
+				.log("${body}");
 
 	}
 
