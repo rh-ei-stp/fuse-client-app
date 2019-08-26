@@ -57,13 +57,13 @@ public class ProducerTest {
         out.expectedMessageCount(1);
 
         // exercise the route
-        in.sendBodyAndProperty("hello", "TIMERCOUNTER", "1");
+        in.sendBodyAndHeader("hello", "counter", "1");
 
         // make assertions
         out.assertIsSatisfied(1);
         Exchange exchange = out.getReceivedExchanges().get(0);
         assertEquals(256, exchange.getIn().getBody().toString().getBytes().length);
-        assertEquals("1", exchange.getProperty("TIMERCOUNTER", String.class));
+        assertEquals("1", exchange.getIn().getHeader("counter"));
 
 
     }

@@ -23,7 +23,7 @@ public class ConsumerRouteBuilder extends RouteBuilder {
 
 
 		from("consumeramqp:" + queueName).routeId("consumer").autoStartup(runRoute)
-				.log("${body}");
+				.log("Consumed message # ${header.counter}");
 
 	}
 

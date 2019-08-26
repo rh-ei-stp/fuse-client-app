@@ -25,7 +25,6 @@ public class QPIDRouterConfiguration {
 	@Value("${consumer.router.password}")
 	private String c_password;
 
-	//@Bean(name = "jmsConnectionFactory")
 	private JmsConnectionFactory jmsConnectionFactory(String type) throws Exception {
 
 		JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
@@ -34,10 +33,12 @@ public class QPIDRouterConfiguration {
 				jmsConnectionFactory.setRemoteURI(p_url);
 				jmsConnectionFactory.setUsername(p_username);
 				jmsConnectionFactory.setPassword(p_password);
+				jmsConnectionFactory.setClientID("producer");
 			} else if (type.equals("consumer")) {
 				jmsConnectionFactory.setRemoteURI(c_url);
 				jmsConnectionFactory.setUsername(c_username);
 				jmsConnectionFactory.setPassword(c_password);
+				jmsConnectionFactory.setClientID("consumer");
 			}
 		} catch (Exception e) {
 			throw new Exception(e);

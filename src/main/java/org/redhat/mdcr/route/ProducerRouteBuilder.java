@@ -7,7 +7,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Random;
 
 @Component
 public class ProducerRouteBuilder extends RouteBuilder {
@@ -38,13 +37,22 @@ public class ProducerRouteBuilder extends RouteBuilder {
 		from("timer://foo?fixedRate=true&repeatCount=" + producerMessageRepeatCount + "&period=" + producerMessagePeriodMillis)
 				.routeId("producer").autoStartup(runRoute)
 				.process(new Processor() {
+					private int counter;
+
+					@Override
+					public void process(Exchange exchange) throws Exception {
+						counter++;
+						exchange.getIn().setHeader("counter", counter);
+					}
+				})
+				.process(new Processor() {
 					@Override
 					public void process(Exchange exchange) throws Exception {
 						String random = RandomStringUtils.randomAscii(producerMessageSizeBytes);
 						exchange.getIn().setBody(random);
 					}
 				})
-				.log("Produced message #${property.TIMERCOUNTER}")
+				.log("Produced message # ${header.counter}")
 				.to("produceramqp:" + queueName);
 
 	}
