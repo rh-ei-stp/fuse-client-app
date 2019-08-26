@@ -3,8 +3,11 @@ package org.redhat.mdcr.route;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Random;
 
 @Component
 public class ProducerRouteBuilder extends RouteBuilder {
@@ -37,8 +40,8 @@ public class ProducerRouteBuilder extends RouteBuilder {
 				.process(new Processor() {
 					@Override
 					public void process(Exchange exchange) throws Exception {
-						byte[] r = new byte[producerMessageSizeBytes];
-						exchange.getIn().setBody(new String(r));
+						String random = RandomStringUtils.randomAscii(producerMessageSizeBytes);
+						exchange.getIn().setBody(random);
 					}
 				})
 				.log("Produced message #${property.TIMERCOUNTER}")

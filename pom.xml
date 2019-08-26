@@ -65,6 +65,12 @@
             <artifactId>camel-amqp</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6.0.redhat-7</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
@@ -86,6 +92,7 @@
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 

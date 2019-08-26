@@ -62,8 +62,8 @@ public class ProducerTest {
         // make assertions
         out.assertIsSatisfied(1);
         Exchange exchange = out.getReceivedExchanges().get(0);
-        assertEquals(exchange.getIn().getBody().toString().getBytes().length, 256);
-        assertEquals(exchange.getProperty("TIMERCOUNTER", String.class), "1");
+        assertEquals(256, exchange.getIn().getBody().toString().getBytes().length);
+        assertEquals("1", exchange.getProperty("TIMERCOUNTER", String.class));
 
 
     }
