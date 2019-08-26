@@ -8,6 +8,36 @@ Build the application:
 
 `mvn clean install`
 
+## Run application locally
+
+`java -jar target/fuse-client-app-1.0-SNAPSHOT.jar`
+
+## Overrride producer/consumer properties
+
+The app looks for configuration in the default spring boot locations. For example,
+you can create a properties file `config/application.properties`, and override the 
+following producer and consumer config.
+
+```properties
+#Client producer properties
+producer.router.url=amqp://localhost:5672
+producer.router.user=admin
+producer.router.password=admin
+producer.queue.name=queue.test
+producer.route.switch=true
+producer.message.size.bytes=256
+producer.message.period.millis=1000
+producer.message.count=0
+
+#Client consumer properties
+consumer.router.url=amqp://localhost:5672
+consumer.router.user=admin
+consumer.router.password=admin
+consumer.queue.name=queue.test
+consumer.route.switch=false
+
+```
+
 ## Creating a container image with s2i
 
 Get the latest Fuse image streams:
@@ -65,12 +95,3 @@ Note: At this time the pipeline is assuming we are deploying the app to the `dat
 Start the pipeline build
 
 `oc start-build fuse-client-app-pipeline`
-
-## Integration Testing
-
-The example includes a [fabric8 arquillian](https://github.com/fabric8io/fabric8/tree/v2.2.170.redhat/components/fabric8-arquillian) OpenShift Integration Test. 
-Once the container image has been built and deployed in OpenShift, the integration test can be run with:
-
-`mvn test -Dtest=*KT`
-
-The test is disabled by default and has to be enabled using `-Dtest`. 

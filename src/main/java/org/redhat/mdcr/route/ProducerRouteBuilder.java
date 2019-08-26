@@ -21,7 +21,13 @@ public class ProducerRouteBuilder extends RouteBuilder {
 
 	@Value("${producer.message.size.bytes}")
 	private int producerMessageSizeBytes;
-	
+
+	@Value("${producer.message.period.millis}")
+	private int producerMessagePeriodMillis;
+
+	@Value("${producer.message.count}")
+	private int producerMessageRepeatCount;
+
 	@Override
 	public void configure() throws Exception {
 
@@ -30,7 +36,8 @@ public class ProducerRouteBuilder extends RouteBuilder {
 				.transform(simple("${exception.message}"))
 				.log("Exception: ${body}");
 
-		from("timer://foo?fixedRate=true&period=1000").routeId("producer").autoStartup(runRoute)
+		from("timer://foo?fixedRate=true&repeatCount=" + producerMessageRepeatCount + "&period=" + producerMessagePeriodMillis)
+				.routeId("producer").autoStartup(runRoute)
 				.process(new Processor() {
 					@Override
 					public void process(Exchange exchange) throws Exception {
@@ -38,6 +45,7 @@ public class ProducerRouteBuilder extends RouteBuilder {
 						exchange.getIn().setBody(new String(r));
 					}
 				})
+				.log("Produced message #${property.TIMERCOUNTER}")
 				.to("produceramqp:" + queueName);
 
 	}
