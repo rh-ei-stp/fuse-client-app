@@ -41,13 +41,13 @@ public class ProducerTest {
     @Before
     public void configureMocks() throws Exception {
         context.getRouteDefinition("producer")
-                .adviceWith(context, new AdviceWithRouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        replaceFromWith("direct:input");
-                        mockEndpointsAndSkip("produceramq*");
-                    }
-                });
+            .adviceWith(context, new AdviceWithRouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    replaceFromWith("direct:input");
+                    mockEndpointsAndSkip("produceramq*");
+                }
+            });
     }
 
     @Test
