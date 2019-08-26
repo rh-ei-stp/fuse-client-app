@@ -1,8 +1,14 @@
 package org.redhat.mdcr.route;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Base64;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class ProducerRouteBuilder extends RouteBuilder {
@@ -12,6 +18,9 @@ public class ProducerRouteBuilder extends RouteBuilder {
 	
 	@Value("${producer.route.switch}")
 	private boolean runRoute;
+
+	@Value("${producer.message.size.bytes}")
+	private int producerMessageSizeBytes;
 	
 	@Override
 	public void configure() throws Exception {
@@ -22,8 +31,14 @@ public class ProducerRouteBuilder extends RouteBuilder {
 				.log("Exception: ${body}");
 
 		from("timer://foo?fixedRate=true&period=1000").routeId("producer").autoStartup(runRoute)
-			.setBody(simple("Test Message at ->" + "${date:now}")).log("${body}")
-			.to("produceramqp:" + queueName);
+				.process(new Processor() {
+					@Override
+					public void process(Exchange exchange) throws Exception {
+						byte[] r = new byte[producerMessageSizeBytes];
+						exchange.getIn().setBody(new String(r));
+					}
+				})
+				.to("produceramqp:" + queueName);
 
 	}
 
