@@ -11,50 +11,50 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProducerRouteBuilder extends RouteBuilder {
 
-	@Value("${producer.queue.name}")
-	private String queueName;
-	
-	@Value("${producer.route.switch}")
-	private boolean runRoute;
+    @Value("${producer.queue.name}")
+    private String queueName;
 
-	@Value("${producer.message.size.bytes}")
-	private int producerMessageSizeBytes;
+    @Value("${producer.route.switch}")
+    private boolean runRoute;
 
-	@Value("${producer.message.period.millis}")
-	private int producerMessagePeriodMillis;
+    @Value("${producer.message.size.bytes}")
+    private int producerMessageSizeBytes;
 
-	@Value("${producer.message.count}")
-	private int producerMessageRepeatCount;
+    @Value("${producer.message.period.millis}")
+    private int producerMessagePeriodMillis;
 
-	@Override
-	public void configure() throws Exception {
+    @Value("${producer.message.count}")
+    private int producerMessageRepeatCount;
 
-		onException(Exception.class)
-				.handled(true)
-				.transform(simple("${exception.message}"))
-				.log("Exception: ${body}");
+    @Override
+    public void configure() throws Exception {
 
-		from("timer://foo?fixedRate=true&repeatCount=" + producerMessageRepeatCount + "&period=" + producerMessagePeriodMillis)
-				.routeId("producer").autoStartup(runRoute)
-				.process(new Processor() {
-					private int counter;
+        onException(Exception.class)
+                .handled(true)
+                .transform(simple("${exception.message}"))
+                .log("Exception: ${body}");
 
-					@Override
-					public void process(Exchange exchange) throws Exception {
-						counter++;
-						exchange.getIn().setHeader("counter", counter);
-					}
-				})
-				.process(new Processor() {
-					@Override
-					public void process(Exchange exchange) throws Exception {
-						String random = RandomStringUtils.randomAscii(producerMessageSizeBytes);
-						exchange.getIn().setBody(random);
-					}
-				})
-				.log("Produced message # ${header.counter}")
-				.to("produceramqp:" + queueName);
+        from("timer://foo?fixedRate=true&repeatCount=" + producerMessageRepeatCount + "&period=" + producerMessagePeriodMillis + "&delay=3000")
+                .routeId("producer").autoStartup(runRoute)
+                .process(new Processor() {
+                    private int counter = 0;
 
-	}
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        counter++;
+                        exchange.getIn().setHeader("counter", Integer.toString(counter));
+                    }
+                })
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String random = RandomStringUtils.randomAscii(producerMessageSizeBytes);
+                        exchange.getIn().setBody(random);
+                    }
+                })
+                .log("Produced message # ${header.counter}")
+                .to("produceramqp:" + queueName);
+
+    }
 
 }

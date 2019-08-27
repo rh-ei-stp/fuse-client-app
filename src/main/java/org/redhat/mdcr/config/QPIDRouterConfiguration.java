@@ -11,64 +11,64 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 @Configuration
 public class QPIDRouterConfiguration {
 
-	@Value("${producer.router.url}")
-	private String p_url;
-	@Value("${producer.router.user}")
-	private String p_username;
-	@Value("${producer.router.password}")
-	private String p_password;
-	
-	@Value("${consumer.router.url}")
-	private String c_url;
-	@Value("${consumer.router.user}")
-	private String c_username;
-	@Value("${consumer.router.password}")
-	private String c_password;
+    @Value("${producer.router.url}")
+    private String p_url;
+    @Value("${producer.router.user}")
+    private String p_username;
+    @Value("${producer.router.password}")
+    private String p_password;
 
-	private JmsConnectionFactory jmsConnectionFactory(String type) throws Exception {
+    @Value("${consumer.router.url}")
+    private String c_url;
+    @Value("${consumer.router.user}")
+    private String c_username;
+    @Value("${consumer.router.password}")
+    private String c_password;
 
-		JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
-		try {
-			if (type.equals("producer")) {
-				jmsConnectionFactory.setRemoteURI(p_url);
-				jmsConnectionFactory.setUsername(p_username);
-				jmsConnectionFactory.setPassword(p_password);
-				jmsConnectionFactory.setClientID("producer");
-			} else if (type.equals("consumer")) {
-				jmsConnectionFactory.setRemoteURI(c_url);
-				jmsConnectionFactory.setUsername(c_username);
-				jmsConnectionFactory.setPassword(c_password);
-				jmsConnectionFactory.setClientID("consumer");
-			}
-		} catch (Exception e) {
-			throw new Exception(e);
-		}
-		return jmsConnectionFactory;
-	}
+    private JmsConnectionFactory jmsConnectionFactory(String type) throws Exception {
 
-	private CachingConnectionFactory cachingConnectionFactory(String type) throws Exception {
-		CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
-		cachingConnectionFactory.setTargetConnectionFactory(jmsConnectionFactory(type));
-		return cachingConnectionFactory;
-	}
+        JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
+        try {
+            if (type.equals("producer")) {
+                jmsConnectionFactory.setRemoteURI(p_url);
+                jmsConnectionFactory.setUsername(p_username);
+                jmsConnectionFactory.setPassword(p_password);
+                jmsConnectionFactory.setClientID("producer");
+            } else if (type.equals("consumer")) {
+                jmsConnectionFactory.setRemoteURI(c_url);
+                jmsConnectionFactory.setUsername(c_username);
+                jmsConnectionFactory.setPassword(c_password);
+                jmsConnectionFactory.setClientID("consumer");
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        return jmsConnectionFactory;
+    }
 
-	private JmsConfiguration jmsConfiguration(String type) throws Exception {
-		JmsConfiguration jmsConfiguration = new JmsConfiguration();
-		jmsConfiguration.setConnectionFactory(cachingConnectionFactory(type));
-		return jmsConfiguration;
-	}
+    private CachingConnectionFactory cachingConnectionFactory(String type) throws Exception {
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
+        cachingConnectionFactory.setTargetConnectionFactory(jmsConnectionFactory(type));
+        return cachingConnectionFactory;
+    }
 
-	@Bean(name = "produceramqp")
-	public AMQPComponent producerAmqpComponent() throws Exception {
-		AMQPComponent component = new AMQPComponent();
-		component.setConfiguration(jmsConfiguration("producer"));
-		return component;
-	}
-	
-	@Bean(name = "consumeramqp")
-	public AMQPComponent consumerAmqpComponent() throws Exception {
-		AMQPComponent component = new AMQPComponent();
-		component.setConfiguration(jmsConfiguration("consumer"));
-		return component;
-	}
+    private JmsConfiguration jmsConfiguration(String type) throws Exception {
+        JmsConfiguration jmsConfiguration = new JmsConfiguration();
+        jmsConfiguration.setConnectionFactory(cachingConnectionFactory(type));
+        return jmsConfiguration;
+    }
+
+    @Bean(name = "produceramqp")
+    public AMQPComponent producerAmqpComponent() throws Exception {
+        AMQPComponent component = new AMQPComponent();
+        component.setConfiguration(jmsConfiguration("producer"));
+        return component;
+    }
+
+    @Bean(name = "consumeramqp")
+    public AMQPComponent consumerAmqpComponent() throws Exception {
+        AMQPComponent component = new AMQPComponent();
+        component.setConfiguration(jmsConfiguration("consumer"));
+        return component;
+    }
 }

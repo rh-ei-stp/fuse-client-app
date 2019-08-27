@@ -4,6 +4,7 @@ import org.apache.camel.*;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,14 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.Assert.assertEquals;
+import org.springframework.test.context.TestPropertySource;
 
 @RunWith(CamelSpringBootRunner.class)
 @SpringBootTest
 @EnableAutoConfiguration
 @ComponentScan
 @ContextConfiguration()
+@TestPropertySource("classpath:producer-test.properties")
 public class ProducerTest {
 
     @Autowired
@@ -62,9 +63,8 @@ public class ProducerTest {
         // make assertions
         out.assertIsSatisfied(1);
         Exchange exchange = out.getReceivedExchanges().get(0);
-        assertEquals(256, exchange.getIn().getBody().toString().getBytes().length);
-        assertEquals("1", exchange.getIn().getHeader("counter"));
-
+        Assert.assertEquals(256, exchange.getIn().getBody().toString().getBytes().length);
+        Assert.assertEquals("1", exchange.getIn().getHeader("counter"));
 
     }
 

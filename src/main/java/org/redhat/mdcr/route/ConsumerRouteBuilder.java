@@ -7,24 +7,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConsumerRouteBuilder extends RouteBuilder {
 
-	@Value("${consumer.queue.name}")
-	private String queueName;
-	
-	@Value("${consumer.route.switch}")
-	private boolean runRoute;
-	
-	@Override
-	public void configure() throws Exception {
+    @Value("${consumer.queue.name}")
+    private String queueName;
 
-		onException(Exception.class)
-				.handled(true)
-				.transform(simple("${exception.message}"))
-				.log("Exception: ${body}");
+    @Value("${consumer.route.switch}")
+    private boolean runRoute;
+
+    @Override
+    public void configure() throws Exception {
+
+        onException(Exception.class)
+                .handled(true)
+                .transform(simple("${exception.message}"))
+                .log("Exception: ${body}");
 
 
-		from("consumeramqp:" + queueName).routeId("consumer").autoStartup(runRoute)
-				.log("Consumed message # ${header.counter}");
+        from("consumeramqp:" + queueName).routeId("consumer").autoStartup(runRoute)
+                .log("Consumed message # ${header.counter}");
 
-	}
+    }
 
 }
