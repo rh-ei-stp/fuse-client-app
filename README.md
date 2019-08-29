@@ -34,7 +34,7 @@ consumer.router.url=amqp://localhost:5672
 consumer.router.user=admin
 consumer.router.password=admin
 consumer.queue.name=queue.test
-consumer.route.switch=false
+consumer.route.switch=true
 
 ```
 
