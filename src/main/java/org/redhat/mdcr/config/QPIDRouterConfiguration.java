@@ -3,6 +3,8 @@ package org.redhat.mdcr.config;
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.qpid.jms.JmsConnectionFactory;
+import org.apache.qpid.jms.policy.JmsDefaultPrefetchPolicy;
+import org.apache.qpid.jms.policy.JmsPrefetchPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +30,8 @@ public class QPIDRouterConfiguration {
     private String c_password;
     @Value("${consumer.client.id}")
     private String c_id;
+    @Value("${consumer.prefetch}")
+    private int c_prefetch;
 
     private JmsConnectionFactory jmsConnectionFactory(String type) throws Exception {
 
@@ -43,11 +47,18 @@ public class QPIDRouterConfiguration {
                 jmsConnectionFactory.setUsername(c_username);
                 jmsConnectionFactory.setPassword(c_password);
                 jmsConnectionFactory.setClientID(c_id);
+                jmsConnectionFactory.setPrefetchPolicy(jmsPrefetchPolicy());
             }
         } catch (Exception e) {
             throw new Exception(e);
         }
         return jmsConnectionFactory;
+    }
+
+    private JmsPrefetchPolicy jmsPrefetchPolicy() throws Exception {
+        JmsDefaultPrefetchPolicy jmsPrefetchPolicy = new JmsDefaultPrefetchPolicy();
+        jmsPrefetchPolicy.setQueuePrefetch(c_prefetch);
+        return jmsPrefetchPolicy;
     }
 
     private CachingConnectionFactory cachingConnectionFactory(String type) throws Exception {
