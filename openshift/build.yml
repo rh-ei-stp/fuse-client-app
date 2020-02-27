@@ -29,7 +29,7 @@ objects:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: fuse7-java-openshift:1.3
+            name: fuse7-java-openshift:1.5
             namespace: openshift
   - apiVersion: v1
     kind: ImageStream
