@@ -30,12 +30,12 @@ objects:
                   name: jolokia
               readinessProbe:
                 httpGet:
-                  path: /health
+                  path: actuator/health
                   port: 8081
                 initialDelaySeconds: 10
               livenessProbe:
                 httpGet:
-                  path: /health
+                  path: actuator/health
                   port: 8081
                 initialDelaySeconds: 180
               resources:
@@ -52,7 +52,6 @@ objects:
             - name: application-config
               configMap:
                 name: fuse-client-app
-                defaultMode: 420
       triggers:
         - type: ImageChange
           imageChangeParams:
