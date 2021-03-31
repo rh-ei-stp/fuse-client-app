@@ -2,6 +2,7 @@
 
 node('maven') {
 
+    // you may want to define build and deployment namespaces separately and use the appropriate variables in various stages
     env.NAMESPACE           = "amq-client"
     env.APP_NAME            = "fuse-amq-client"
     env.API_VERSION         = "1.0"
@@ -32,6 +33,8 @@ node('maven') {
         def oc = "oc -n ${NAMESPACE}"
         sh "${oc} create configmap fuse-amq-client --from-file=src/main/resources/application.properties --dry-run=client -o yaml | ${oc} apply -f -"
         sh "${oc} process -f openshift/application.yml -p APPLICATION_IMAGE_TAG=${DEPLOYMENT_VERSION} | ${oc} apply -f -"
+        // use an image stream tagging command if promoting from a build namespace to a deployment namespace
+        // sh "${oc} tag ${CI_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION} ${DEV_PROJECT}/${APP_NAME}:${DEPLOYMENT_VERSION}"
         sh "${oc} rollout latest dc/${APP_NAME}"
         sh "${oc} rollout status dc/${APP_NAME} --watch"
     }
