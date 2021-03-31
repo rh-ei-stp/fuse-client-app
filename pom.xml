@@ -4,22 +4,18 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example.mdcr</groupId>
-    <artifactId>fuse-client-app</artifactId>
+    <groupId>org.redhat.integration</groupId>
+    <artifactId>fuse-amq-client</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>Multi-Datacenter Reference Architecture :: AMQP Client</name>
-    <description>Spring Boot example running a Camel route</description>
+    <name>AMQ Client</name>
+    <description>Fuse on Spring Boot AMQ Client Examples</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- configure the Fuse version you want to use here -->
-        <fuse.version>7.5.0.fuse-sb2-750029-redhat-00003</fuse.version>
-
-        <!-- maven plugin versions -->
-        <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+        <java.version>1.8</java.version>
+        <fuse.version>7.8.0.fuse-sb2-780038-redhat-00001</fuse.version>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -35,8 +31,6 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- Enabling health checks -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -44,29 +38,15 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
-
-        <!--  Camel AMQP -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-amqp</artifactId>
         </dependency>
-
-        <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -82,34 +62,19 @@
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
-
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <argLine>-DenableImageStreamDetection=true</argLine>
-                    <excludes>
-                        <exclude>**/*KT.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.jboss.redhat-fuse</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -124,4 +89,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

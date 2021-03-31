@@ -1,30 +1,30 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: fuse-client-app
+  template: fuse-amq-client
 metadata:
   annotations:
     description: deployment for Fuse AMQP client app
-  name: fuse-client-app
+  name: fuse-amq-client
 objects:
   - apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
     metadata:
       labels:
-        app: fuse-client-app
-      name: fuse-client-app
+        app: fuse-amq-client
+      name: fuse-amq-client
     spec:
       replicas: 1
       selector:
-        app: fuse-client-app
+        app: fuse-amq-client
       template:
         metadata:
           labels:
-            app: fuse-client-app
+            app: fuse-amq-client
         spec:
           containers:
-            - name: fuse-client-app
-              image: ' '
+            - name: fuse-amq-client
+              image: ''
               ports:
                 - containerPort: 8778
                   name: jolokia
@@ -38,29 +38,22 @@ objects:
                   path: actuator/health
                   port: 8081
                 initialDelaySeconds: 180
-              resources:
-                limits:
-                  cpu: "1.0"
-                  memory: 256Mi
-                requests:
-                  cpu: "0.2"
-                  memory: 256Mi
               volumeMounts:
                 - name: application-config
                   mountPath: /deployments/config
           volumes:
             - name: application-config
               configMap:
-                name: fuse-client-app
+                name: fuse-amq-client
       triggers:
         - type: ImageChange
           imageChangeParams:
             automatic: false
             containerNames:
-              - fuse-client-app
+              - fuse-amq-client
             from:
               kind: ImageStreamTag
-              name: fuse-client-app:${APPLICATION_IMAGE_TAG}
+              name: fuse-amq-client:${APPLICATION_IMAGE_TAG}
 parameters:
   - name: APPLICATION_IMAGE_TAG
     value: latest

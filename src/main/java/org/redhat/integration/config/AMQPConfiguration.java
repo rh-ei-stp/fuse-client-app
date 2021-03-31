@@ -1,4 +1,4 @@
-package org.redhat.mdcr.config;
+package org.redhat.integration.config;
 
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
@@ -9,35 +9,34 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
 @Configuration
-public class QPIDRouterConfiguration {
+public class AMQPConfiguration {
 
-	@Value("${producer.router.url}")
-	private String p_url;
-	@Value("${producer.router.user}")
-	private String p_username;
-	@Value("${producer.router.password}")
-	private String p_password;
+	@Value("${amqp.producer.uri}")
+	private String producerUrl;
+	@Value("${amqp.producer.user}")
+	private String producerUsername;
+	@Value("${amqp.producer.password}")
+	private String producerPassword;
 	
-	@Value("${consumer.router.url}")
-	private String c_url;
-	@Value("${consumer.router.user}")
-	private String c_username;
-	@Value("${consumer.router.password}")
-	private String c_password;
-
-	//@Bean(name = "jmsConnectionFactory")
+	@Value("${amqp.consumer.uri}")
+	private String consumerUrl;
+	@Value("${amqp.consumer.user}")
+	private String consumerUsername;
+	@Value("${amqp.consumer.password}")
+	private String consumerPassword;
+	
 	private JmsConnectionFactory jmsConnectionFactory(String type) throws Exception {
 
 		JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
 		try {
 			if (type.equals("producer")) {
-				jmsConnectionFactory.setRemoteURI(p_url);
-				jmsConnectionFactory.setUsername(p_username);
-				jmsConnectionFactory.setPassword(p_password);
+				jmsConnectionFactory.setRemoteURI(producerUrl);
+				jmsConnectionFactory.setUsername(producerUsername);
+				jmsConnectionFactory.setPassword(producerPassword);
 			} else if (type.equals("consumer")) {
-				jmsConnectionFactory.setRemoteURI(c_url);
-				jmsConnectionFactory.setUsername(c_username);
-				jmsConnectionFactory.setPassword(c_password);
+				jmsConnectionFactory.setRemoteURI(consumerUrl);
+				jmsConnectionFactory.setUsername(consumerUsername);
+				jmsConnectionFactory.setPassword(consumerPassword);
 			}
 		} catch (Exception e) {
 			throw new Exception(e);
@@ -57,14 +56,14 @@ public class QPIDRouterConfiguration {
 		return jmsConfiguration;
 	}
 
-	@Bean(name = "produceramqp")
+	@Bean(name = "producer-amqp")
 	public AMQPComponent producerAmqpComponent() throws Exception {
 		AMQPComponent component = new AMQPComponent();
 		component.setConfiguration(jmsConfiguration("producer"));
 		return component;
 	}
 	
-	@Bean(name = "consumeramqp")
+	@Bean(name = "consumer-amqp")
 	public AMQPComponent consumerAmqpComponent() throws Exception {
 		AMQPComponent component = new AMQPComponent();
 		component.setConfiguration(jmsConfiguration("consumer"));
