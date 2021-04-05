@@ -1,4 +1,4 @@
-package org.redhat.mdcr.route;
+package org.redhat.integration.route;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConsumerRouteBuilder extends RouteBuilder {
 
-	@Value("${consumer.queue.name}")
-	private String queueName;
+	@Value("${amqp.consumer.address}")
+	private String address;
 	
-	@Value("${consumer.route.switch}")
-	private boolean runRoute;
+	@Value("${amqp.consumer.enabled}")
+	private boolean enabled;
 	
 	@Override
 	public void configure() throws Exception {
@@ -21,8 +21,9 @@ public class ConsumerRouteBuilder extends RouteBuilder {
 				.transform(simple("${exception.message}"))
 				.log("Exception: ${body}");
 
-
-		from("consumeramqp:" + queueName).routeId("consumer").autoStartup(runRoute)
+		from("consumer-amqp:" + address)
+				.routeId("consumer")
+				.autoStartup(enabled)
 				.log("${body}");
 
 	}
