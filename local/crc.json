@@ -1,0 +1,6 @@
+{
+  "consent-telemetry": "yes",
+  "cpus": "16",
+  "memory": "20480",
+  "nameserver": "8.8.8.8"
+}
