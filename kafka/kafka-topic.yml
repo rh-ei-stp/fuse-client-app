@@ -1,0 +1,12 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-kafka-cluster
+  name: random.public.event.topic
+  namespace: kafka
+spec:
+  config: {}
+  partitions: 3
+  replicas: 1
+  topicName: random.public.event.topic

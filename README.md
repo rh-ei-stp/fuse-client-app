@@ -80,6 +80,23 @@ https://keycloak-keycloak.apps-crc.testing/auth/realms/myrealm/protocol/openid-c
 `oc apply -f openshift/amq-client-service.yml`
 `oc apply -f openshift/amq-client-route.yml`
 
+
+##
+* Install operator
+* Apply cluster
+* Apply topic
+* `oc get kafka my-kafka-cluster -o=jsonpath='{.status.listeners[?(@.type=="external")].bootstrapServers}{"\n"}'`
+* `oc get secret my-kafka-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.crt}' | base64 -d > ca.crt`
+* `oc get secret my-kafka-cluster-cluster-ca-cert  -o jsonpath='{.data.ca\.password}' | base64 --decode > ca.password`
+* `keytool -keystore clientkeystore -genkey -alias client`
+* `export CERT_FILE_PATH=ca.crt`
+* `export CERT_PASSWORD_FILE_PATH=ca.password`
+* `export KEYSTORE_LOCATION=clientkeystore`
+* `export PASSWORD=`cat $CERT_PASSWORD_FILE_PATH``
+* `export CA_CERT_ALIAS=strimzi-kafka-cert`
+* `keytool -importcert -alias $CA_CERT_ALIAS -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD`
+* `keytool -list -alias $CA_CERT_ALIAS -keystore $KEYSTORE_LOCATION`
+
 ## Using a Jenkins pipeline for building and deploying
 
 Get the latest Fuse image streams:
