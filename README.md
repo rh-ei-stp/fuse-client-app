@@ -12,7 +12,7 @@ Build the application:
 
 Get the latest Fuse image streams:
 
-`oc apply -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.0.fuse-sb2-790030/fis-image-streams.json -n openshift`
+`oc apply -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.0.fuse-sb2-790035/fis-image-streams.json -n openshift`
 
 Create a binary s2i build configuration:
 
@@ -40,11 +40,68 @@ Follow the progress of the deployment
 
 `oc rollout status dc/fuse-amq-client --watch`
 
+## AMQ Broker
+* TODO this is not working.
+* Install AMQ Broker
+* apply resources in amq-broker
+
+## Install Keycloak
+https://www.keycloak.org/getting-started/getting-started-openshift
+
+`oc process -f https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/latest/openshift-examples/keycloak.yaml \
+    -p KEYCLOAK_USER=admin \
+    -p KEYCLOAK_PASSWORD=admin \
+    -p NAMESPACE=keycloak \
+| oc create -f - `
+
+Create and Import Realm. Name "Myrealm"
+
+Create user
+username: user
+Password: password
+
+https://keycloak-keycloak.apps-crc.testing/auth/realms/myrealm/.well-known/openid-configuration
+https://www.keycloak.org/getting-started/getting-started-openshift
+
+## Keycloak Client
+https://www.keycloak.org/docs/latest/securing_apps/#_spring_boot_adapter
+
+myclient oauth client info
+grant type: authorization code
+clientId: myclient
+auth url: 
+https://keycloak-keycloak.apps-crc.testing/auth/realms/myrealm/protocol/openid-connect/auth
+
+access token url:
+https://keycloak-keycloak.apps-crc.testing/auth/realms/myrealm/protocol/openid-connect/token
+
+## Apply AMQ Client Service and Route
+
+`oc apply -f openshift/amq-client-service.yml`
+`oc apply -f openshift/amq-client-route.yml`
+
+
+##
+* Install operator
+* Apply cluster
+* Apply topic
+* `oc get kafka my-kafka-cluster -o=jsonpath='{.status.listeners[?(@.type=="external")].bootstrapServers}{"\n"}'`
+* `oc get secret my-kafka-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.crt}' | base64 -d > ca.crt`
+* `oc get secret my-kafka-cluster-cluster-ca-cert  -o jsonpath='{.data.ca\.password}' | base64 --decode > ca.password`
+* `keytool -keystore clientkeystore -genkey -alias client`
+* `export CERT_FILE_PATH=ca.crt`
+* `export CERT_PASSWORD_FILE_PATH=ca.password`
+* `export KEYSTORE_LOCATION=clientkeystore`
+* `export PASSWORD=`cat $CERT_PASSWORD_FILE_PATH``
+* `export CA_CERT_ALIAS=strimzi-kafka-cert`
+* `keytool -importcert -alias $CA_CERT_ALIAS -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD`
+* `keytool -list -alias $CA_CERT_ALIAS -keystore $KEYSTORE_LOCATION`
+
 ## Using a Jenkins pipeline for building and deploying
 
 Get the latest Fuse image streams:
 
-`oc apply -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.0.fuse-sb2-790030/fis-image-streams.json -n openshift`
+`oc apply -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.0.fuse-sb2-790035/fis-image-streams.json -n openshift`
 
 Apply the application pipeline
 
@@ -54,3 +111,5 @@ Start the pipeline build
 
 `oc start-build fuse-amq-client-pipeline`
 
+## Known Issues
+* Requires Java 8 without command line options: https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception
